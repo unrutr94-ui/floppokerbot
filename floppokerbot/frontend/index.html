@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Покерный Клуб</title>
+    <link rel="stylesheet" href="style.css?v=12.0">
+</head>
+<body>
+    <div class="container">
+        <!-- Страница аутентификации -->
+        <div id="auth-page" class="page-content active">
+            <header class="header">
+                <h1>🎯 Покерный Клуб</h1>
+                <p>Выберите способ входа</p>
+            </header>
+            
+            <div class="nav-buttons">
+                <div class="nav-btn" id="director-auth-btn">
+                    👑 Директор / Дилер
+                    <div class="nav-btn-description">Вход через логин и пароль</div>
+                </div>
+                
+                <div class="nav-btn" id="player-auth-btn">
+                    🎮 Игрок
+                    <div class="nav-btn-description">Вход через Telegram username</div>
+                </div>
+            </div>
+
+            <!-- Форма входа для директора -->
+            <div id="director-login-form" class="login-form" style="display: none;">
+                <h3>🔐 Вход для директора</h3>
+                <input type="text" id="username" placeholder="Логин" class="form-input">
+                <input type="password" id="password" placeholder="Пароль" class="form-input">
+                <button id="director-login-btn" class="btn btn-primary">Войти</button>
+                <button id="back-to-auth" class="btn btn-secondary">Назад</button>
+            </div>
+
+            <!-- Форма входа для игрока -->
+            <div id="player-login-form" class="login-form" style="display: none;">
+                <h3>📱 Вход для игрока</h3>
+                <input type="text" id="telegram-username" placeholder="Telegram username (без @)" class="form-input">
+                <button id="player-login-btn" class="btn btn-primary">Войти через Telegram</button>
+                <button id="back-to-auth-2" class="btn btn-secondary">Назад</button>
+            </div>
+        </div>
+        
+        <!-- Главная страница после входа -->
+        <div id="main-page" class="page-content">
+            <header class="header">
+                <h1>🎯 Покерный Клуб</h1>
+                <p id="user-role-display">Панель управления</p>
+                <div class="user-info" id="user-info-display" style="margin-top: 15px;"></div>
+            </header>
+            
+            <div class="nav-buttons" id="main-nav-buttons">
+                <!-- Кнопки будут заполняться динамически в зависимости от роли -->
+            </div>
+        </div>
+        
+        <!-- Страница турниров -->
+        <div id="tournaments-page" class="page-content">
+            <div class="page-header">
+                <h2 id="tournaments-page-title">🏆 Турниры</h2>
+                <button id="back-to-main" class="btn btn-secondary">← Назад</button>
+            </div>
+            
+            <div id="tournaments-content">
+                <!-- Контент будет заполняться динамически -->
+            </div>
+            
+            <div id="tournaments-list" class="items-list">
+                <div class="empty-state">Загрузка турниров...</div>
+            </div>
+        </div>
+        
+        <!-- Страница рейтинга -->
+        <div id="rating-page" class="page-content">
+            <div class="page-header">
+                <h2>📊 Рейтинг игроков</h2>
+                <button id="back-to-main-2" class="btn btn-secondary">← Назад</button>
+            </div>
+            
+            <div id="rating-content">
+                <!-- Контент будет заполняться динамически -->
+            </div>
+            
+            <div id="rating-list" class="items-list">
+                <div class="empty-state">Загрузка рейтинга...</div>
+            </div>
+        </div>
+        
+        <!-- Страница игроков -->
+        <div id="players-page" class="page-content">
+            <div class="page-header">
+                <h2>👥 Управление игроками</h2>
+                <button id="back-to-main-3" class="btn btn-secondary">← Назад</button>
+            </div>
+            
+            <button id="add-player-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+                + Добавить игрока
+            </button>
+            
+            <div id="players-list" class="items-list">
+                <div class="empty-state">Загрузка игроков...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    
+    <!-- Модальное окно создания/редактирования турнира -->
+    <div id="tournament-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="tournament-modal-title">Создать турнир</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Название турнира *</label>
+                <input type="text" id="tournament-name" placeholder="Введите название турнира" class="form-input">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Аренда (рубли) *</label>
+                    <input type="number" id="tournament-rent-cost" placeholder="Стоимость" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Аренда (фишки) *</label>
+                    <input type="number" id="tournament-rent-chips" placeholder="Фишки" class="form-input">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Повтор (рубли)</label>
+                    <input type="number" id="tournament-rebuy-cost" placeholder="Стоимость" class="form-input" value="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Повтор (фишки)</label>
+                    <input type="number" id="tournament-rebuy-chips" placeholder="Фишки" class="form-input" value="0">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Аддон (рубли)</label>
+                    <input type="number" id="tournament-addon-cost" placeholder="Стоимость" class="form-input" value="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Аддон (фишки)</label>
+                    <input type="number" id="tournament-addon-chips" placeholder="Фишки" class="form-input" value="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Время уровня (минуты)</label>
+                <input type="number" id="tournament-level-time" placeholder="Время уровня" class="form-input" value="15">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Время начала *</label>
+                <input type="datetime-local" id="tournament-time" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Окончание регистрации *</label>
+                <input type="datetime-local" id="tournament-late-reg-time" class="form-input">
+            </div>
+            
+            <div class="modal-actions">
+                <button id="save-tournament-btn" class="btn btn-primary">Сохранить</button>
+                <button id="cancel-tournament-btn" class="btn btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно деталей турнира -->
+    <div id="tournament-detail-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="tournament-detail-title">Информация о турнире</h3>
+            <div id="tournament-detail-content">
+                <!-- Контент будет заполняться динамически -->
+            </div>
+            <div class="modal-actions" id="tournament-detail-actions">
+                <!-- Кнопки будут заполняться динамически -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно рейтинга -->
+    <div id="rating-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="rating-modal-title">Добавить в рейтинг</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Имя игрока *</label>
+                <input type="text" id="rating-player-name" placeholder="Введите полное имя игрока" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Telegram username *</label>
+                <input type="text" id="rating-telegram-username" placeholder="Введите Telegram username (без @)" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Рейтинг</label>
+                <input type="number" id="rating-score" placeholder="Рейтинг" class="form-input" value="1000">
+            </div>
+            
+            <div class="modal-actions">
+                <button id="save-rating-btn" class="btn btn-primary">Сохранить</button>
+                <button id="cancel-rating-btn" class="btn btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно игрока -->
+    <div id="player-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="player-modal-title">Добавить игрока</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Telegram username *</label>
+                <input type="text" id="player-telegram-username" placeholder="Введите Telegram username (без @)" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Полное имя *</label>
+                <input type="text" id="player-full-name" placeholder="Введите полное имя игрока" class="form-input">
+            </div>
+            
+            <div class="modal-actions">
+                <button id="save-player-btn" class="btn btn-primary">Сохранить</button>
+                <button id="cancel-player-btn" class="btn btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=12.0"></script>
+</body>
+</html>
