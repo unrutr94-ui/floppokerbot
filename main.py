@@ -1,16 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
-import os
 import hashlib
 import secrets
 from datetime import datetime
 import random
+import os
 
 app = Flask(__name__)
-FRONTEND_URL = "https://unrutr94-ui.github.io"  # Ваш GitHub Pages URL
 CORS(app, origins=[
-    "https://unrutr94-ui.github.io",  # ваш GitHub Pages
+    "https://unrutr94-ui.github.io",
     "http://localhost:8000",
     "http://127.0.0.1:8000"
 ])
@@ -931,6 +930,46 @@ def get_user_profile(user_id):
         
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
+    finally:
+        conn.close()
+
+# Получение профиля пользователя по Telegram username
+@app.route('/api/user/profile/telegram/<username>', methods=['GET'])
+def get_user_profile_by_telegram(username):
+    """Получение профиля пользователя по Telegram username"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('''
+            SELECT u.id, u.telegram_username, u.full_name, u.role,
+                   r.score, 
+                   (SELECT COUNT(*) + 1 FROM rating WHERE score > r.score) as position
+            FROM users u 
+            LEFT JOIN rating r ON u.telegram_username = r.telegram_username
+            WHERE u.telegram_username = ?
+        ''', (username,))
+        
+        user_data = cursor.fetchone()
+        
+        if not user_data:
+            return jsonify({'success': False, 'message': 'Пользователь не найден'}), 404
+        
+        result = {
+            'id': user_data[0],
+            'telegram_username': user_data[1],
+            'full_name': user_data[2],
+            'role': user_data[3],
+            'rating': {
+                'score': user_data[4] or 1000,
+                'position': user_data[5] if user_data[4] else None
+            }
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
     finally:
         conn.close()
 
