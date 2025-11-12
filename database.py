@@ -129,7 +129,8 @@ def init_database():
         
         # Создаём администраторов если их нет
         cursor.execute("SELECT COUNT(*) FROM users WHERE username = 'ESV65'")
-        if cursor.fetchone()['count'] == 0:
+        result = cursor.fetchone()
+        if result['count'] == 0:
             # Администратор ESV65
             password_hash, salt = hash_password("admin123")
             cursor.execute(
