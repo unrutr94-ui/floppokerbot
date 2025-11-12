@@ -1,6 +1,6 @@
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 import hashlib
 import secrets
 from datetime import datetime
@@ -8,7 +8,7 @@ from datetime import datetime
 def get_db_connection():
     """Подключение к PostgreSQL на вашем VPS"""
     database_url = "postgresql://poker_user:flopbot2024@85.92.111.75:5432/poker_club"
-    conn = psycopg2.connect(database_url)
+    conn = psycopg.connect(database_url, row_factory=dict_row)
     return conn
 
 def hash_password(password, salt=None):
@@ -129,7 +129,7 @@ def init_database():
         
         # Создаём администраторов если их нет
         cursor.execute("SELECT COUNT(*) FROM users WHERE username = 'ESV65'")
-        if cursor.fetchone()[0] == 0:
+        if cursor.fetchone()['count'] == 0:
             # Администратор ESV65
             password_hash, salt = hash_password("admin123")
             cursor.execute(
