@@ -1,0 +1,9 @@
+[deploy]
+startCommand = "python main.py"
+
+[build]
+builder = "nixpacks"
+
+[[services]]
+name = "web"
+run = "python main.py"
