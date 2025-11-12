@@ -6,11 +6,8 @@ import secrets
 from datetime import datetime
 
 def get_db_connection():
-    """Подключение к PostgreSQL Railway"""
-    database_url = os.environ.get('DATABASE_URL')
-    if not database_url:
-        raise Exception("DATABASE_URL not found in environment variables")
-    
+    """Подключение к PostgreSQL на вашем VPS"""
+    database_url = "postgresql://poker_user:flopbot2024@85.92.111.75:5432/poker_club"
     conn = psycopg2.connect(database_url)
     return conn
 
@@ -30,7 +27,7 @@ def verify_password(password, password_hash, salt):
     return test_hash == password_hash
 
 def init_database():
-    """Инициализация базы данных PostgreSQL в Railway"""
+    """Инициализация базы данных PostgreSQL на VPS"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -171,7 +168,7 @@ def init_database():
                 )
         
         conn.commit()
-        print("✅ Railway PostgreSQL база данных инициализирована")
+        print("✅ VPS PostgreSQL база данных инициализирована")
         print("👑 Администраторы созданы")
         print("🎮 Тестовые игроки созданы")
         
